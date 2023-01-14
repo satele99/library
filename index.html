@@ -10,22 +10,47 @@
     <script src="main.js"></script>
 </head>
 <body>
-    <div class="container-lg">
-        <div class="book-card"></div>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Amir's Library</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse nav-space" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                <a class="nav-link active" aria-current="page" href="#">Books</a>
+                <a class="nav-link" href="#">Albums</a>
+                <a class="nav-link" href="#">Movies</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </form>
+          </div>
+        </div>
+    </nav>
+    <div class="container-lg center">
+        <button onclick="on()" class="btn btn-light addbtn">+ BOOK</button>
+        <div class="card-cont" id="add-book">
+            <!-- <div class="book-card"></div>
+            <div class="book-card"></div> -->
+        </div>
     </div>
     <div id="overlay">
-        <form>
-            <h2>Add New Book</h2>
-            <div>Book Title: <input type="text" required></div>
-            <br>
-            <div>Author: <input type="text" required></div> 
-            <br>
-            <div>Number of Pages: <input type="number" required></div>
-            <br>
-            <div>Did you read this book already? <input type="radio" name="read" required> Yes <input type="radio" name="read" required> No</div>
-            <br>
-        </form>
+        <div>
+            <form id="overlay-form">
+                <h2>Add A New Book</h2>
+                <div><input type="text" placeholder="Book Title" maxlength="30" required></div>
+                <br>
+                <div><input type="text" placeholder="Author" maxlength="30" required></div> 
+                <br>
+                <div><input type="number" placeholder="Page Count" max="10000" required></div>
+                <br>
+                <div>Did you read this book already? <input type="radio" name="read" required> Yes <input type="radio" name="read" required> No</div>
+                <br>
+                <button class="btn btn-outline-primary overlay-btn" id="form-btn" onclick="createBook()" type="submit">Add</button>
+            </form>
+        </div>
     </div>
-    <button onclick="on()">ADD NEW BOOK</button>
 </body>
 </html>

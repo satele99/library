@@ -11,6 +11,7 @@ const overlayForm = document.getElementById("overlay-form");
 const overlayRemove = document.getElementById('overlay-remove');
 const addBookbtn = document.getElementById('add-book-btn');
 const formBtn = document.getElementById('form-btn');
+let bookCardId = 0;
 let readBtnId = 0;
 let removeBtnId = 0;
 
@@ -37,6 +38,7 @@ formBtn.addEventListener('click', (event) => {
 
         addBookContainer.appendChild(cardDiv);
         cardDiv.classList = 'book-card';
+        cardDiv.id = bookCardId++;
         cardDiv.appendChild(cardDiv2);
         cardDiv.appendChild(cardDiv3);
         cardDiv2.classList = 'book-card1';
@@ -62,6 +64,7 @@ formBtn.addEventListener('click', (event) => {
         removeBtn.classList = "btn btn-outline-success";
         removeBtn.innerText = 'Remove';
         removeBtn.id = removeBtnId++;
+        removeBtn.setAttribute('onclick', 'removeBook('+removeBtn.id+')');
         overlayForm.reset();
     };
 });
@@ -76,5 +79,8 @@ addBookbtn.addEventListener('click', () => {
     overlay.style.display = 'block';
 })
 
-
+function removeBook(id){
+    const removingDiv = document.getElementById(id);
+    removingDiv.remove();
+}
 

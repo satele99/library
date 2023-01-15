@@ -1,3 +1,4 @@
+
 .nav-space {
     justify-content: space-between;
 }
@@ -9,14 +10,30 @@
 }
 .card-cont {
     display: grid;
-    grid-template-columns: repeat(2, 200px);
-    grid-template-rows: repeat(2, 200px);
+    grid-template-columns: repeat(5, 200px);
+    grid-template-rows: repeat(3, 200px);
+    gap: 20px;
+    width: 100%;
+    margin: auto 0;
 }
 
 .book-card {
-    width: 200px;
-    height: 200px;
-    border: 1px solid black;
+    border-radius: 5px;
+    background: rgba(248, 249, 250, 1);
+}
+.book-card1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+.book-card2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
 }
 
 #overlay-form {
@@ -30,11 +47,13 @@
     /* border: 1px solid black; */
     border-radius: 15px;
 }
+
  input[type=text], input[type=number] {
     height: 40px;
     width: 277px;
     text-align: center;
 }
+
 #overlay > div {
     display: flex;
     flex-direction: column;

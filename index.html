@@ -31,16 +31,17 @@
     <div class="container-lg center">
         <button class="btn btn-light addbtn" id="add-book-btn">+ BOOK</button>
         <div class="card-cont" id="add-book">
-            <!-- <div class="book-card">
+            <div class="book-card">
                 <div class="book-card1">
                     <h5>The Wheel Of Time</h5>
                     <h5>Robert Jordan</h5>
                     <h5>466 pages</h5>
                 </div>
                 <div class="book-card2">
+                    <button class="btn btn-success">Read</button>
                     <button class="btn btn-outline-success">Remove</button>
                 </div>
-            </div> -->
+            </div>
         </div>
     </div>
     <div id="overlay">
@@ -54,7 +55,7 @@
                 <div><input id="pages" type="number" placeholder="Page Count" max="10000" required></div>
                 <br>
                 <div id="read">Did you read this book already? 
-                    <input type="radio" name="read" required> Yes <input type="radio" name="read" required> No
+                    <input type="radio" name="read" value="Yes" required> Yes <input type="radio" name="read" value="No" required> No
                 </div>
                 <br>
                 <button class="btn btn-outline-primary overlay-btn" id="form-btn" type="submit">Add</button>

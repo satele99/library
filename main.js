@@ -11,18 +11,14 @@ const overlayForm = document.getElementById("overlay-form");
 const overlayRemove = document.getElementById('overlay-remove');
 const addBookbtn = document.getElementById('add-book-btn');
 const formBtn = document.getElementById('form-btn');
-
-const title = document.getElementById('title').value;
-const author = document.getElementById('author').value;
-const pages = document.getElementById('pages').value;
-const read = document.getElementById('read');
-let btnId = 0;
+let readBtnId = 0;
+let removeBtnId = 0;
 
 formBtn.addEventListener('click', (event) => {
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;
     const pages = document.getElementById('pages').value;
-    const read = document.getElementById('read');
+    const readRadio = document.querySelector('input[name="read"]:checked').value;
     const validation = overlayForm.checkValidity();
     const validationReport = overlayForm.reportValidity();
     event.preventDefault();
@@ -37,6 +33,7 @@ formBtn.addEventListener('click', (event) => {
         const authorH5 = document.createElement('h5');
         const pagesH5 = document.createElement('h5');
         const removeBtn = document.createElement('button');
+        const readBtn = document.createElement('button');
 
         addBookContainer.appendChild(cardDiv);
         cardDiv.classList = 'book-card';
@@ -50,10 +47,21 @@ formBtn.addEventListener('click', (event) => {
         titleH5.innerText = title;
         authorH5.innerText = author;
         pagesH5.innerText = pages+' '+'pages';
+        cardDiv3.appendChild(readBtn);
         cardDiv3.appendChild(removeBtn);
+        console.log(readRadio);
+        if(readRadio == 'Yes'){
+            readBtn.classList = 'btn btn-success';
+            readBtn.innerText = 'Read';
+            readBtn.id = readBtnId++;
+        }else if(readRadio == 'No'){
+            readBtn.classList = 'btn btn-outline-success';
+            readBtn.innerText = 'Read';
+            readBtn.id = readBtnId++;
+        }
         removeBtn.classList = "btn btn-outline-success";
         removeBtn.innerText = 'Remove';
-        removeBtn.id = btnId++;
+        removeBtn.id = removeBtnId++;
         overlayForm.reset();
     };
 });
@@ -67,5 +75,6 @@ overlayRemove.addEventListener('click', () => {
 addBookbtn.addEventListener('click', () => {
     overlay.style.display = 'block';
 })
+
 
 

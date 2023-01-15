@@ -11,7 +11,7 @@
 .card-cont {
     display: grid;
     grid-template-columns: repeat(5, 200px);
-    grid-template-rows: repeat(3, 200px);
+    grid-template-rows: repeat(3, 230px);
     gap: 20px;
     width: 100%;
     margin: auto 0;
@@ -34,6 +34,10 @@
     justify-content: center;
     align-items: center;
     margin: 10px 0;
+    gap: 10px;
+}
+.book-card2 > button {
+    width: 100px;
 }
 
 #overlay-form {

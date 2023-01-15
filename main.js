@@ -6,24 +6,39 @@ const books = [
         'read': 'yes'
     }
 ];
+const overlay = document.getElementById('overlay');
+const overlayForm = document.getElementById("overlay-form");
+const overlayRemove = document.getElementById('overlay-remove');
+const addBookbtn = document.getElementById('add-book-btn');
 const formBtn = document.getElementById('form-btn');
 
-formBtn.addEventListener('click', () => {
-    console.log('hello')
+formBtn.addEventListener('click', (event) => {
+    const validation = overlayForm.checkValidity();
+    const validationReport = overlayForm.reportValidity();
+   if(validation == true){
+       overlayForm.preventDefault();
+   }
+
+    
+        // overlay.style.display = 'none';
+    
+        // const addBookContainer = document.getElementById('add-book');
+        // const cardDiv = document.createElement('div');
+    
+        // addBookContainer.appendChild(cardDiv);
+        // cardDiv.classList = 'book-card';
+        // cardDiv.innerText = 'New Book';
+   
 });
 
+overlayRemove.addEventListener('click', () => {
+    if(event.target.id == 'overlay-remove'){
+        overlay.style.display = 'none';
+    }
+})
 
-function on() {
-    let overlay = document.getElementById('overlay');
+addBookbtn.addEventListener('click', () => {
     overlay.style.display = 'block';
-};
+})
 
-// function createBook() {
-//     console.log('added')
-//     const addBookContainer = document.getElementById('add-book');
-//     const cardDiv = document.createElement('div');
 
-//     addBookContainer.appendChild(cardDiv);
-//     cardDiv.classList = 'book-card';
-//     cardDiv.innerText = 'New Book';
-// };

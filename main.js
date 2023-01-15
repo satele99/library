@@ -13,22 +13,23 @@ const addBookbtn = document.getElementById('add-book-btn');
 const formBtn = document.getElementById('form-btn');
 
 formBtn.addEventListener('click', (event) => {
+    const title = document.getElementById('title').value;
+    const author = document.getElementById('author').value;
+    const pages = document.getElementById('pages').value;
+    const read = document.getElementById('read');
     const validation = overlayForm.checkValidity();
     const validationReport = overlayForm.reportValidity();
-   if(validation == true){
-       overlayForm.preventDefault();
-   }
-
-    
-        // overlay.style.display = 'none';
-    
-        // const addBookContainer = document.getElementById('add-book');
-        // const cardDiv = document.createElement('div');
-    
-        // addBookContainer.appendChild(cardDiv);
-        // cardDiv.classList = 'book-card';
-        // cardDiv.innerText = 'New Book';
-   
+    event.preventDefault();
+    if(validation == true){
+        overlay.style.display = 'none';
+        
+        const addBookContainer = document.getElementById('add-book');
+        const cardDiv = document.createElement('div');
+        
+        addBookContainer.appendChild(cardDiv);
+        cardDiv.classList = 'book-card';
+        cardDiv.innerText = title+' '+author+' '+pages;
+    };
 });
 
 overlayRemove.addEventListener('click', () => {

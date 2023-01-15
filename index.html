@@ -37,15 +37,15 @@
     </div>
     <div id="overlay">
         <div id="overlay-remove">
-            <form id="overlay-form" onsubmit="return true">
+            <form id="overlay-form">
                 <h2>Add A New Book</h2>
-                <div><input type="text" placeholder="Book Title" maxlength="30" required></div>
+                <div><input id="title" type="text" placeholder="Book Title" maxlength="30" required></div>
                 <br>
-                <div><input type="text" placeholder="Author" maxlength="30" required></div> 
+                <div><input id="author" type="text" placeholder="Author" maxlength="30" required></div> 
                 <br>
-                <div><input type="number" placeholder="Page Count" max="10000" required></div>
+                <div><input id="pages" type="number" placeholder="Page Count" max="10000" required></div>
                 <br>
-                <div>Did you read this book already? 
+                <div id="read">Did you read this book already? 
                     <input type="radio" name="read" required> Yes <input type="radio" name="read" required> No
                 </div>
                 <br>

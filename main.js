@@ -40,7 +40,6 @@ formBtn.addEventListener('click', (event) => {
 
         const newBook = new Book(title, author, pages, readRadio);
         books.push(newBook);
-
         addBookContainer.appendChild(cardDiv);
         cardDiv.classList = 'book-card';
         cardDiv.id = bookCardId++;

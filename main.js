@@ -1,11 +1,4 @@
-const books = [
-    {
-        'title': 'The Wheel Of Time: Eye Of The World',
-        'pages': 782,
-        'author' : 'Robert Jordan',
-        'read': 'yes'
-    }
-];
+const books = [];
 const overlay = document.getElementById('overlay');
 const overlayForm = document.getElementById("overlay-form");
 const overlayRemove = document.getElementById('overlay-remove');
@@ -14,6 +7,15 @@ const formBtn = document.getElementById('form-btn');
 let bookCardId = 0;
 let readBtnId = 0;
 let removeBtnId = 0;
+
+function Book(title, author, page, read){
+    this.title = title
+    this.pages = page
+    this.author = author
+    this.read = read
+};
+
+
 
 formBtn.addEventListener('click', (event) => {
     const title = document.getElementById('title').value;
@@ -36,6 +38,9 @@ formBtn.addEventListener('click', (event) => {
         const removeBtn = document.createElement('button');
         const readBtn = document.createElement('button');
 
+        const newBook = new Book(title, author, pages, readRadio);
+        books.push(newBook);
+
         addBookContainer.appendChild(cardDiv);
         cardDiv.classList = 'book-card';
         cardDiv.id = bookCardId++;
@@ -51,7 +56,6 @@ formBtn.addEventListener('click', (event) => {
         pagesH5.innerText = pages+' '+'pages';
         cardDiv3.appendChild(readBtn);
         cardDiv3.appendChild(removeBtn);
-        console.log(readRadio);
         if(readRadio == 'Yes'){
             readBtn.classList = 'btn btn-success';
             readBtn.innerText = 'Read';

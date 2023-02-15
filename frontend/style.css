@@ -40,7 +40,7 @@
     width: 100px;
 }
 
-#overlay-form {
+#overlay-form, #overlay-form1, #overlay-form2{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -52,20 +52,22 @@
     border-radius: 15px;
 }
 
- input[type=text], input[type=number] {
+input[type=text], input[type=number], input[type=password] {
     height: 40px;
     width: 277px;
     text-align: center;
 }
 
-#overlay > div {
+#overlay > div, #overlay1 > div, #overlay2 > div {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 150px 0 150px 0;
+} 
+#log-out-btn {
+    display: none;
 }
-
-#overlay {
+#overlay, #overlay1, #overlay2{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -85,6 +87,10 @@
     width: 150px;
     font-size: 20px;
 }
+.overlay-btn-sign {
+    width: 175px;
+    font-size: 20px;
+}
 
 /* .overlay {
     position: fixed;
@@ -95,9 +101,17 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
 } */
-#overlay.active {
+#overlay.active, #overlay1.active, #overlay2.active{
     display: block;
 } 
 .addbtn {
     margin: 25px 0;
+} 
+#logged-in-user{
+    margin-top: 15px;
 }
+.d-flex {
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}  

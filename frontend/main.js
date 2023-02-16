@@ -17,12 +17,13 @@ const formBtnSign = document.getElementById('form-btn-sign');
 const logIn = document.getElementById('log-in-btn');
 const signUp = document.getElementById('sign-up-btn');
 const logOut = document.getElementById('log-out-btn');
-const displayedUser = document.getElementById('logged-in-user');
+let displayedUser = document.getElementById('logged-in-user');
 
 
 let bookCardId = 0;
 let readBtnId = 0;
 let removeBtnId = 0;
+let titleH5Id = 0;
 
 function Book(title, author, page, read){
     this.title = title
@@ -107,6 +108,7 @@ formBtn.addEventListener('click', (event) => {
     if(displayedUser.innerText != ''){
         if(validation == true){
             overlay.style.display = 'none';
+            displayedUser = document.getElementById('logged-in-user');
             const title = document.getElementById('title').value;
             const author = document.getElementById('author').value;
             const pages = document.getElementById('pages').value;
@@ -123,9 +125,9 @@ formBtn.addEventListener('click', (event) => {
             
             const newBook = new Book(title, author, pages, readRadio);
             if(newBook.read == 'Yes'){
-                newBook.read = true;
+                newBook.read = 'true';
             }else if(newBook.read == 'No'){
-                newBook.read = false;
+                newBook.read = 'false';
             }
             addNewBook(newBook, displayedUser.innerText);
             books.push(newBook);
@@ -141,20 +143,25 @@ formBtn.addEventListener('click', (event) => {
             cardDiv2.appendChild(authorH5);
             cardDiv2.appendChild(pagesH5);
             titleH5.innerText = title;
+            titleH5.id = titleH5Id++ + '.3';
             authorH5.innerText = author;
             pagesH5.innerText = pages+' '+'pages';
             cardDiv3.appendChild(readBtn);
             cardDiv3.appendChild(removeBtn);
             if(readRadio == 'Yes'){
+                let title = newBook.title
+                let user = displayedUser.innerText
                 readBtn.classList = 'btn btn-success';
                 readBtn.innerText = 'Read';
                 readBtn.id = readBtnId++ + '.1';
-                readBtn.setAttribute('onclick', 'readButton('+readBtn.id+')');
+                readBtn.setAttribute('onclick', `readButton(`+readBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`"`+`,`+`"true")`);
             }else if(readRadio == 'No'){
+                let title = newBook.title
+                let user = displayedUser.innerText
                 readBtn.classList = 'btn btn-outline-success';
                 readBtn.innerText = 'Read';
                 readBtn.id = readBtnId++ + '.1';
-                readBtn.setAttribute('onclick', 'readButton('+readBtn.id+')');
+                readBtn.setAttribute('onclick', `readButton(`+readBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`"`+`,`+`"false")`);
             }
             removeBtn.classList = "btn btn-outline-success";
             removeBtn.innerText = 'Remove';
@@ -174,16 +181,30 @@ function removeBook(id){
     removingDiv.remove();
 };
 
-function readButton(id, bookName, username){
-    const readButton = document.getElementById(id);
-    if(readButton.className == 'btn btn-outline-success'){
-        axios.put(serverApi+`/update/${bookName}/${username}`).then((response)=>{
-
-        })
-        readButton.classList = 'btn btn-success';
-    }else if(readButton.className == 'btn btn-success'){
-        readButton.classList = 'btn btn-outline-success';
+function readButton(id, bookName, username, condition){
+    console.log('hello');
+    const readButtonCard = document.getElementById(`${id}`);
+    console.log(readButtonCard.id)
+    if(readButtonCard.className == 'btn btn-outline-success'){
+        readButtonCard.classList = 'btn btn-success';
+    }else if(readButtonCard.className == 'btn btn-success'){
+        readButtonCard.classList = 'btn btn-outline-success';
     }
+    axios.put(serverApi+`/update/${bookName}/${username}/${condition}`).then((response)=>{
+        if(response.data == 'Read Value updated'){
+            // readButtonCard.removeAttribute('onclick');
+            // console.log(`${id}`);
+            readButtonCard.setAttribute('onclick', `readButton(`+id+`,`+`"`+bookName+`"`+`,`+`"`+username+`"`+`,`+`"false")`);
+            console.log('Read Value updated - condition = false');
+        }else if(response.data == 'Read Value updated-2'){
+            // readButtonCard.removeAttribute('onclick');
+            // console.log(`${id}`);
+            readButtonCard.setAttribute('onclick', `readButton(`+id+`,`+`"`+bookName+`"`+`,`+`"`+username+`"`+`,`+`"true")`);
+            console.log('Read Value updated - condition = true');
+        }
+    }).catch(error => {
+        console.log(error);
+    });
 }; 
 
 function createUserAccount(createdUser) {

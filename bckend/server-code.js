@@ -16,8 +16,7 @@ app.use(express.json());
 const User = sequelizeConnection.define('users', {
     username:{
         type: DataTypes.STRING,
-        field: 'username',
-        primaryKey: true
+        field: 'username'
     },
     password:{
         type: DataTypes.STRING,
@@ -30,7 +29,8 @@ const User = sequelizeConnection.define('users', {
 const Book = sequelizeConnection.define('books', {
     title:{
         type: DataTypes.STRING,
-        field: 'book_title'
+        field: 'book_title',
+        primaryKey: true
     },
     author:{
         type: DataTypes.STRING,
@@ -41,15 +41,16 @@ const Book = sequelizeConnection.define('books', {
         field: 'page_count'
     },
     read:{
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.STRING,
         field: 'read_already'
+
     }
 }, {
     timestamps: false
 });
 
-User.hasMany(Book, {as: 'Book'});
-Book.belongsTo(User);
+User.hasMany(Book);
+Book.belongsTo(User, {foreignKey:{allowNull: false}});
 
 app.listen(port, '127.0.0.1', ()=> {
     console.log(`Server started at port ${port}`);
@@ -89,21 +90,21 @@ app.get('/login/:username/:password', (req, res)=> {
 
 app.post('/user', (req, res)=> {
     const addUser = req.body;
-    User.findByPk(addUser.username).then((user)=>{
+    User.findOne({where:{username: addUser.username}}).then((user)=>{
         if(user){
             return res.send('User exists already');
         }else if (!user){
             User.create({
                 username: `${addUser.username}`,
                 password: `${addUser.password}`
-            }) 
+            }); 
             return res.status(201).send('User successfully created');
-        }
+        };
     })
 })
 
 let foundUserData, foundBookData;
-app.post('/books/:username', (req, res, next)=> {
+app.post('/books/:username', (req, res)=> {
     const addBook = req.body;
     const user = req.params['username'];
     sequelizeConnection.sync().then(()=> {
@@ -119,18 +120,46 @@ app.post('/books/:username', (req, res, next)=> {
         return Book.findOne({where:{title: `${addBook.title}`}});
     }).then((data)=>{
         foundBookData = data;
+        console.log(foundUserData);
         foundUserData.addBook(foundBookData);
     }).catch(error => {
         console.log(error);
         finished = false
     });
     res.status(201).send(true);
-    next();
 }); 
 
-app.put(`/update/:bookname/:username`, (req, res) => {
-    const bookName = req.params['bookname'];
-    const username = req.params['username'];
+app.put(`/update/:book/:username/:condition`, (req, res) => {
+    const bookName = req.params['book'];
+    const username1 = req.params['username']; 
+    const condition = req.params['condition'];
 
+    console.log(req.params);
+    let putBook, putUser
+    sequelizeConnection.sync().then(()=> {
+        return Book.findOne({where: {title: bookName}});
+    }).then((data) => {
+        putBook = data;
+        console.log(putBook)
+        return User.findOne({where: {username: username1}});
+    }).then((data)=> {
+        putUser = data;
+        console.log(putUser)
+        console.log(putBook.dataValues.title)
+        console.log(putUser.dataValues.id)
+        if(condition == 'true'){
+            Book.update({read: 'false', title: putBook.dataValues.title, userId: putUser.dataValues.id}, {where: {
+                title : putBook.dataValues.title,
+                userId: putUser.dataValues.id
+            }}).then(()=>{ return res.send('Read Value updated');});
+        }else if (condition == 'false') {
+            Book.update({read: 'true', title: putBook.dataValues.title, userId: putUser.dataValues.id}, {where: {
+                title : putBook.dataValues.title,
+                userId: putUser.dataValues.id
+            }}).then(()=>{ return res.send('Read Value updated-2');});
+        };
+    }).catch(error => {
+        console.log(error)
+    })
 })
 

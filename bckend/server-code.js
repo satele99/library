@@ -161,5 +161,26 @@ app.put(`/update/:book/:username/:condition`, (req, res) => {
     }).catch(error => {
         console.log(error)
     })
-})
+});
+let deleteBook, deleteUser
+app.delete('/delete/:book/:username', (req, res)=> {
+    const book = req.params['book'];
+    const username = req.params['username'];
+
+    sequelizeConnection.sync().then(()=>{
+        return Book.findOne({where:{title:book}})
+    }).then((found)=>{
+        deleteBook = found
+        return User.findOne({where:{username: username}})
+    }).then((foundUser)=>{
+        deleteUser = foundUser
+        Book.destroy({where:{title: deleteBook.dataValues.title, userId: deleteUser.dataValues.id}}).then(()=>{
+            res.send('Delete Successful');
+        })
+    }).catch(error=>{
+        if(error){
+            res.send('Failed Delete')
+        }
+    });
+});
 

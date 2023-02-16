@@ -157,16 +157,17 @@ formBtn.addEventListener('click', (event) => {
                 readBtn.setAttribute('onclick', `readButton(`+readBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`"`+`,`+`"true")`);
             }else if(readRadio == 'No'){
                 let title = newBook.title
-                let user = displayedUser.innerText
+                let user = displayedUser.innerText;
                 readBtn.classList = 'btn btn-outline-success';
                 readBtn.innerText = 'Read';
                 readBtn.id = readBtnId++ + '.1';
                 readBtn.setAttribute('onclick', `readButton(`+readBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`"`+`,`+`"false")`);
             }
+            let user = displayedUser.innerText;
             removeBtn.classList = "btn btn-outline-success";
             removeBtn.innerText = 'Remove';
             removeBtn.id = removeBtnId++ + '.2';
-            removeBtn.setAttribute('onclick', 'removeBook('+removeBtn.id+')');
+            removeBtn.setAttribute('onclick', `removeBook(`+removeBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`")`);
             overlayForm.reset();
         };
     }else{
@@ -176,9 +177,12 @@ formBtn.addEventListener('click', (event) => {
     }
 }); 
 
-function removeBook(id){
+function removeBook(id,bookName,username){
     const removingDiv = document.getElementById(id);
-    removingDiv.remove();
+    axios.delete(serverApi+`/delete/${bookName}/${username}`).then((response)=>{
+        console.log(response.data);
+        removingDiv.remove();
+    });
 };
 
 function readButton(id, bookName, username, condition){

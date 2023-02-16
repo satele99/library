@@ -18,6 +18,7 @@ const logIn = document.getElementById('log-in-btn');
 const signUp = document.getElementById('sign-up-btn');
 const logOut = document.getElementById('log-out-btn');
 let displayedUser = document.getElementById('logged-in-user');
+let addBookContainer = document.getElementById('add-book');
 
 
 let bookCardId = 0;
@@ -36,6 +37,7 @@ function User(username, password){
     this.username = username;
     this.password = password;
 }
+
 
 document.addEventListener('click', (event) => {
     const target = event.target;
@@ -57,10 +59,11 @@ document.addEventListener('click', (event) => {
         const validationReport1 = overlayForm1.reportValidity();
         const userLogIn = document.getElementById('username').value;
         const passLogIn = document.getElementById('password').value;
+        addBookContainer = document.getElementById('add-book');
         if(validationReport1 == true){
             overlayForm1.reset();
             overlay1.style.display = 'none';
-            getExistingUser(userLogIn, passLogIn,signUp, logIn, logOut,  displayedUser);
+            getExistingUser(userLogIn, passLogIn,signUp, logIn, logOut,  displayedUser, addBookContainer);
         }
     }
     if(target.id == 'form-btn-sign'){
@@ -95,9 +98,7 @@ document.addEventListener('click', (event) => {
         logIn.style.display = 'block'
         logOut.style.display = 'none'
         displayedUser.innerText = '';
-    }
-    if(target.innerText == 'Read'){
-
+        addBookContainer.innerHTML = '';
     }
 }) 
 
@@ -113,7 +114,7 @@ formBtn.addEventListener('click', (event) => {
             const author = document.getElementById('author').value;
             const pages = document.getElementById('pages').value;
             const readRadio = document.querySelector('input[name="read"]:checked').value;
-            const addBookContainer = document.getElementById('add-book');
+            addBookContainer = document.getElementById('add-book');
             const cardDiv = document.createElement('div');
             const cardDiv2 = document.createElement('div');
             const cardDiv3 = document.createElement('div');
@@ -221,13 +222,17 @@ function createUserAccount(createdUser) {
     })
 };
 
-function getExistingUser(username, password, signUp, logIn, logOut, displayedUser){
+function getExistingUser(username, password, signUp, logIn, logOut, displayedUser, container){
     axios.get(serverApi+`/login/${username}/${password}`).then(response => {
         if(response.data == `User ${username} Exists`){
             signUp.style.display = 'none'
             logIn.style.display = 'none'
             logOut.style.display = 'block' 
             displayedUser.innerText = `${username}`;
+            axios.get(serverApi+`/load-login/${username}/${password}`).then(response =>{
+                console.log(response.data);
+                renderBooks(response.data, container, displayedUser);
+            })
         }
     }).catch(error => {
         if(error){
@@ -244,8 +249,56 @@ function addNewBook(createdBook, username){
     });
 }; 
 
-function updateBook() {
-    axios.put()
+function renderBooks(response, container, displayedUser){
+    for(i=0;i<response.length;i++){
+        let addBookContainer = container;
+        const cardDiv = document.createElement('div');
+        const cardDiv2 = document.createElement('div');
+        const cardDiv3 = document.createElement('div');
+        const titleH5 = document.createElement('h5');
+        const authorH5 = document.createElement('h5');
+        const pagesH5 = document.createElement('h5');
+        const removeBtn = document.createElement('button');
+        const readBtn = document.createElement('button');
+
+        addBookContainer.appendChild(cardDiv);
+        cardDiv.classList = 'book-card';
+        cardDiv.id = bookCardId++ + '.2';
+        cardDiv.appendChild(cardDiv2);
+        cardDiv.appendChild(cardDiv3);
+        cardDiv2.classList = 'book-card1';
+        cardDiv3.classList = 'book-card2';
+        cardDiv2.appendChild(titleH5);
+        cardDiv2.appendChild(authorH5);
+        cardDiv2.appendChild(pagesH5);
+        titleH5.innerText = response[i].title;
+        titleH5.id = titleH5Id++ + '.3';
+        authorH5.innerText = response[i].author;
+        pagesH5.innerText = response[i].pages+' '+'pages';
+        cardDiv3.appendChild(readBtn);
+        cardDiv3.appendChild(removeBtn);
+            if(response[i].read == 'true'){
+                let title = response[i].title
+                let user = displayedUser.innerText
+                readBtn.classList = 'btn btn-success';
+                readBtn.innerText = 'Read';
+                readBtn.id = readBtnId++ + '.1';
+                readBtn.setAttribute('onclick', `readButton(`+readBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`"`+`,`+`"true")`);
+            }else if(response[i].read == 'false'){
+                let title = response[i].title
+                let user = displayedUser.innerText;
+                readBtn.classList = 'btn btn-outline-success';
+                readBtn.innerText = 'Read';
+                readBtn.id = readBtnId++ + '.1';
+                readBtn.setAttribute('onclick', `readButton(`+readBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`"`+`,`+`"false")`);
+            }
+            let user = displayedUser.innerText;
+            removeBtn.classList = "btn btn-outline-success";
+            removeBtn.innerText = 'Remove';
+            removeBtn.id = removeBtnId++ + '.2';
+            removeBtn.setAttribute('onclick', `removeBook(`+removeBtn.id+`,`+`"`+title+`"`+`,`+`"`+user+`")`);
+    }
+
 }
 
 

@@ -1,7 +1,9 @@
 const port = 8000;
 const http = require('http');
 const express = require('express');
+// const uuid = require('uuid');
 const app = express();
+// const uniqueId = uuid();
 const cors = require('cors');
 const server = http.createServer(app);
 const {Sequelize, DataTypes, where} = require('sequelize');
@@ -70,6 +72,23 @@ sequelizeConnection.sync().then(()=>{
     console.log('tables created');
 });
 
+app.get('/load-login/:username/:password', (req, res) =>{
+    const loggedUser = req.params['username'];
+    const loggedPw = req.params['password'];
+    let foundUser
+    sequelizeConnection.sync().then(()=> {
+        return User.findOne({where:{username: loggedUser, password: loggedPw}})
+    }).then((found)=>{
+        foundUser = found.dataValues.id;
+        return Book.findAll({where:{userId: foundUser}})
+    }).then((books)=>{
+        if(books){
+            res.send(books);
+        }else{
+            res.send('None - user needs to add books');
+        }
+    })
+});
 
 app.get('/login/:username/:password', (req, res)=> {
     const getUser = req.params['username'];

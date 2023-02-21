@@ -28,11 +28,54 @@ const User = sequelizeConnection.define('users', {
     timestamps: false
 });
 
+const Movie = sequelizeConnection.define('movie', {
+    title:{
+        type: DataTypes.STRING,
+        field: 'movie_title'
+    },
+    year:{
+        type: DataTypes.INTEGER,
+        field: 'year_of_release'
+    },
+    watched:{
+        type: DataTypes.STRING,
+        field: 'watch_status'
+    },
+    uuid:{
+        type: DataTypes.UUID,
+        field: 'unique_id',
+        primaryKey: true
+    }
+}, {
+    timestamps: false
+});
+
+const Music = sequelizeConnection.define('music', {
+    title:{
+        type: DataTypes.STRING,
+        field: 'song_title'
+    },
+    artist:{
+        type: DataTypes.STRING,
+        field: 'artist'
+    },
+    favorite:{
+        type: DataTypes.STRING,
+        field: 'favorite'
+    },
+    uuid:{
+        type: DataTypes.UUID,
+        field: 'unique_id', 
+        primaryKey: true
+    }
+}, {
+    timestamps: false
+})
+
 const Book = sequelizeConnection.define('books', {
     title:{
         type: DataTypes.STRING,
-        field: 'book_title',
-        primaryKey: true
+        field: 'book_title'
     },
     author:{
         type: DataTypes.STRING,
@@ -46,20 +89,29 @@ const Book = sequelizeConnection.define('books', {
         type: DataTypes.STRING,
         field: 'read_already'
 
+    }, 
+    uuid:{
+        type: DataTypes.UUID,
+        field: 'unique_id',
+        primaryKey: true
     }
 }, {
     timestamps: false
 });
 
 User.hasMany(Book);
+User.hasMany(Movie);
+User.hasMany(Music);
 Book.belongsTo(User, {foreignKey:{allowNull: false}});
+Movie.belongsTo(User, {foreignKey:{allowNull: false}});
+Music.belongsTo(User, {foreignKey:{allowNull: false}});
 
 app.listen(port, '127.0.0.1', ()=> {
     console.log(`Server started at port ${port}`);
 });
 app.use(cors());
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
@@ -72,7 +124,7 @@ sequelizeConnection.sync().then(()=>{
     console.log('tables created');
 });
 
-app.get('/load-login/:username/:password', (req, res) =>{
+app.get('/load/:username/:password', (req, res) =>{
     const loggedUser = req.params['username'];
     const loggedPw = req.params['password'];
     let foundUser
@@ -81,6 +133,40 @@ app.get('/load-login/:username/:password', (req, res) =>{
     }).then((found)=>{
         foundUser = found.dataValues.id;
         return Book.findAll({where:{userId: foundUser}})
+    }).then((books)=>{
+        if(books){
+            res.send(books);
+        }else{
+            res.send('None - user needs to add books');
+        }
+    })
+});
+app.get('/music-load/:username/:password', (req, res) =>{
+    const loggedUser = req.params['username'];
+    const loggedPw = req.params['password'];
+    let foundUser
+    sequelizeConnection.sync().then(()=> {
+        return User.findOne({where:{username: loggedUser, password: loggedPw}})
+    }).then((found)=>{
+        foundUser = found.dataValues.id;
+        return Music.findAll({where:{userId: foundUser}})
+    }).then((books)=>{
+        if(books){
+            res.send(books);
+        }else{
+            res.send('None - user needs to add books');
+        }
+    })
+});
+app.get('/movie-load/:username/:password', (req, res) =>{
+    const loggedUser = req.params['username'];
+    const loggedPw = req.params['password'];
+    let foundUser
+    sequelizeConnection.sync().then(()=> {
+        return User.findOne({where:{username: loggedUser, password: loggedPw}})
+    }).then((found)=>{
+        foundUser = found.dataValues.id;
+        return Movie.findAll({where:{userId: foundUser}})
     }).then((books)=>{
         if(books){
             res.send(books);
@@ -100,7 +186,6 @@ app.get('/login/:username/:password', (req, res)=> {
         if(user){
             res.status(200).send(`User ${getUser} Exists`);
         }else{
-            console.log('User Not Found');
             res.status(302).send('User Not Found')
         }
     })
@@ -131,54 +216,157 @@ app.post('/books/:username', (req, res)=> {
             title: `${addBook.title}`,
             author: `${addBook.author}`,
             pages: `${addBook.pages}`,
-            read: `${addBook.read}`
+            read: `${addBook.read}`,
+            uuid: `${addBook.uuid}`
+        }); 
+        return User.findOne({where:{username: `${user}`}});
+    }).then((data)=>{
+        res.status(201);
+        foundUserData = data;
+        return Book.findAll({where:{uuid: addBook.uuid}});
+    }).then((data)=>{
+        foundBookData = data;
+        if(foundBookData == null){
+            Book.destroy({where:{uuid: addBook.uuid}});
+            res.status(409).send('Failed to find book.');
+        }else{
+            foundUserData.addBook(foundBookData);
+            res.status(201).send(true);
+        }
+    }).catch(error => {
+        res.status(501).send(error);
+        console.log(error)
+    });
+});
+let foundMusicData;
+app.post('/music/:username', (req, res)=> {
+    const addSong = req.body;
+    const user = req.params['username'];
+    sequelizeConnection.sync().then(()=> {
+        Music.create({
+            title: `${addSong.title}`,
+            artist: `${addSong.artist}`,
+            favorite: `${addSong.favorite}`,
+            uuid: `${addSong.uuid}`
+        }); 
+        return User.findOne({where:{username: `${user}`}});
+    }).then((data)=>{
+        res.status(201);
+        foundUserData = data;
+        return Music.findByPk(addSong.uuid);
+    }).then((data)=>{
+        foundMusicData = data;
+        if(foundMusicData){
+            foundUserData.addMusic(foundMusicData);
+            res.status(201).send(true);
+        }
+    }).catch(error => {
+        res.status(273).send(error)
+    });
+}); 
+app.post('/movie/:username', (req, res)=> {
+    const addMovie = req.body;
+    const user = req.params['username'];
+    let foundMovieData
+    sequelizeConnection.sync().then(()=> {
+        Movie.create({
+            title: `${addMovie.title}`,
+            year: `${addMovie.year}`,
+            watched: `${addMovie.watched}`,
+            uuid: `${addMovie.uuid}`
         }); 
         return User.findOne({where:{username: `${user}`}})
     }).then((data)=>{
+        res.status(201);
         foundUserData = data;
-        return Book.findOne({where:{title: `${addBook.title}`}});
+        return Movie.findByPk(addMovie.uuid);
     }).then((data)=>{
-        foundBookData = data;
-        console.log(foundUserData);
-        foundUserData.addBook(foundBookData);
+        foundMovieData = data;
+        if(foundMovieData){
+            foundUserData.addMovie(foundMovieData);
+            res.status(201).send(true);
+        }
     }).catch(error => {
-        console.log(error);
-        finished = false
+        res.status(501).send(error)
     });
-    res.status(201).send(true);
-}); 
+});
 
 app.put(`/update/:book/:username/:condition`, (req, res) => {
     const bookName = req.params['book'];
     const username1 = req.params['username']; 
     const condition = req.params['condition'];
 
-    console.log(req.params);
     let putBook, putUser
     sequelizeConnection.sync().then(()=> {
         return Book.findOne({where: {title: bookName}});
     }).then((data) => {
         putBook = data;
-        console.log(putBook)
         return User.findOne({where: {username: username1}});
     }).then((data)=> {
         putUser = data;
-        console.log(putUser)
-        console.log(putBook.dataValues.title)
-        console.log(putUser.dataValues.id)
         if(condition == 'true'){
-            Book.update({read: 'false', title: putBook.dataValues.title, userId: putUser.dataValues.id}, {where: {
-                title : putBook.dataValues.title,
-                userId: putUser.dataValues.id
+            Book.update({read: 'false'}, {where: {
+                uuid: putBook.dataValues.uuid
             }}).then(()=>{ return res.send('Read Value updated');});
         }else if (condition == 'false') {
-            Book.update({read: 'true', title: putBook.dataValues.title, userId: putUser.dataValues.id}, {where: {
-                title : putBook.dataValues.title,
-                userId: putUser.dataValues.id
+            Book.update({read: 'true'}, {where: {
+                uuid: putBook.dataValues.uuid
             }}).then(()=>{ return res.send('Read Value updated-2');});
         };
     }).catch(error => {
-        console.log(error)
+        res.status(404).send(error);
+    })
+});
+app.put(`/update-music/:song/:username/:condition`, (req, res) => {
+    const songName = req.params['song'];
+    const username1 = req.params['username']; 
+    const condition = req.params['condition'];
+
+    let putBook, putUser
+    sequelizeConnection.sync().then(()=> {
+        return Music.findOne({where: {title: songName}});
+    }).then((data) => {
+        putBook = data;
+        return User.findOne({where: {username: username1}});
+    }).then((data)=> {
+        putUser = data;
+        if(condition == 'true'){
+            Music.update({favorite: 'false'}, {where: {
+                uuid: putBook.dataValues.uuid
+            }}).then(()=>{ return res.send('Read Value updated');});
+        }else if (condition == 'false') {
+            Music.update({favorite: 'true'}, {where: {
+                uuid: putBook.dataValues.uuid
+            }}).then(()=>{ return res.send('Read Value updated-2');});
+        };
+    }).catch(error => {
+        res.status(404).send(error);
+    })
+});
+app.put(`/update-movie/:movie/:username/:condition`, (req, res) => {
+    const movieName = req.params['movie'];
+    const username1 = req.params['username']; 
+    const condition = req.params['condition'];
+
+    let putBook, putUser
+    sequelizeConnection.sync().then(()=> {
+        return Movie.findOne({where: {title: movieName}});
+    }).then((data) => {
+        putBook = data;
+        return User.findOne({where: {username: username1}});
+    }).then((data)=> {
+        putUser = data;
+        if(condition == 'true'){
+            Movie.update({watched: 'false'}, {where: {
+                uuid: putBook.dataValues.uuid
+            }}).then(()=>{ return res.send('Read Value updated');});
+        }else if (condition == 'false') {
+            Movie.update({watched: 'true'}, {where: {
+                uuid: putBook.dataValues.uuid
+            }}).then(()=>{ return res.send('Read Value updated-2');});
+        };
+    }).catch(error => {
+        res.status(404).send(error);
     })
 });
 let deleteBook, deleteUser
@@ -193,13 +381,47 @@ app.delete('/delete/:book/:username', (req, res)=> {
         return User.findOne({where:{username: username}})
     }).then((foundUser)=>{
         deleteUser = foundUser
-        Book.destroy({where:{title: deleteBook.dataValues.title, userId: deleteUser.dataValues.id}}).then(()=>{
+        Book.destroy({where:{uuid: deleteBook.dataValues.uuid}}).then(()=>{
             res.send('Delete Successful');
         })
     }).catch(error=>{
-        if(error){
-            res.send('Failed Delete')
-        }
+        res.status(404).send(error);
+    });
+});
+app.delete('/delete-music/:song/:username', (req, res)=> {
+    const song = req.params['song'];
+    const username = req.params['username'];
+
+    sequelizeConnection.sync().then(()=>{
+        return Music.findOne({where:{title:song}})
+    }).then((found)=>{
+        deleteBook = found
+        return User.findOne({where:{username: username}})
+    }).then((foundUser)=>{
+        deleteUser = foundUser
+        Music.destroy({where:{uuid: deleteBook.dataValues.uuid}}).then(()=>{
+            res.send('Delete Successful');
+        })
+    }).catch(error=>{
+        res.status(404).send(error);
+    });
+});
+app.delete('/delete-movie/:movie/:username', (req, res)=> {
+    const movie = req.params['movie'];
+    const username = req.params['username'];
+
+    sequelizeConnection.sync().then(()=>{
+        return Movie.findOne({where:{title:movie}})
+    }).then((found)=>{
+        deleteBook = found
+        return User.findOne({where:{username: username}})
+    }).then((foundUser)=>{
+        deleteUser = foundUser
+        Movie.destroy({where:{uuid: deleteBook.dataValues.uuid}}).then(()=>{
+            res.send('Delete Successful');
+        })
+    }).catch(error=>{
+        res.status(404).send(error);
     });
 });
 

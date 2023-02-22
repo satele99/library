@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "uuid": "^9.0.0"
   },
   "name": "main.js",
   "version": "1.0.0",

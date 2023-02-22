@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href="/frontend/albums/album-style.css" rel="stylesheet">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Amir's Archive</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse nav-space" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a id="books" class="nav-link" href="/frontend/books/index.html">Books</a>
+                    <a id="music" class="nav-link active" aria-current="page" href="/frontend/albums/albums.html">Music</a>
+                    <a id="movies" class="nav-link" href="/frontend/movies/movies.html">Movies</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <button class="btn btn-success" id="log-out-btn">Log Out</button>
+                    <button class="btn btn-outline-success" id="log-in-btn">Log In</button>
+                    <button class="btn btn-success" id="sign-up-btn">Sign Up</button>
+                </form>
+          </div>
+        </div>
+    </nav>
+    <div class="container-lg center">
+        <span><h5 id="logged-in-user"></h5></span>
+        <form class="d-flex" role="search">
+            <input id="searchbox" class="form-control me-2" type="search" placeholder="Search by title..." aria-label="Search" onkeyup="searchFilter()">
+            <!-- <button class="btn btn-outline-success" type="submit">Search</button> -->
+        </form>
+        <button class="btn btn-light addbtn" id="add-book-btn">+ Music</button>
+        <div class="card-cont container-lg center" id="add-book">
+            <!-- <div class="book-card">
+                <div class="book-card1">
+                    <h5>The Wheel Of Time</h5>
+                    <h5>Robert Jordan</h5>
+                    <h5>466 pages</h5>
+                </div>
+                <div class="book-card2">
+                    <button class="btn btn-success">Read</button>
+                    <button class="btn btn-outline-success">Remove</button>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <div id="overlay">
+        <div id="overlay-remove">
+            <form id="overlay-form">
+                <h2>Add a New Song</h2>
+                <div><input id="title" type="text" placeholder="Song Title" maxlength="30" required></div>
+                <br>
+                <div><input id="author" type="text" placeholder="Artist" maxlength="30" required></div> 
+                <br>
+                <div id="read">Mark as Favorite? 
+                    <input type="radio" name="read" value="Yes" required> Yes <input type="radio" name="read" value="No" required> No
+                </div>
+                <br>
+                <button class="btn btn-outline-primary overlay-btn" id="form-btn" type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+    <div id="overlay1">
+        <div id="overlay-remove1">
+            <form id="overlay-form1" validate>
+                <h2>Log In</h2>
+                <div><input id="username" type="text" placeholder="Username" maxlength="12" required></div>
+                <br>
+                <div><input id="password" type="password" placeholder="Password" maxlength="12" minlength="6" required></div> 
+                <br>
+                <button class="btn btn-outline-primary overlay-btn" id="form-btn-log" type="submit">Sign In</button>
+                <br>
+                <p>Don't have an account? <a href="#" id="reveal-sign-up">Create One.</a></p>
+            </form>
+        </div>
+    </div>
+    <div id="overlay2">
+        <div id="overlay-remove2">
+            <form id="overlay-form2" validate>
+                <h2>Create An Account</h2>
+                <div><input id="create_user" type="text" placeholder="Create Username" maxlength="12" required></div>
+                <br>
+                <div><input id="pass" type="password" placeholder="Create Password" maxlength="12" minlength="6" required></div> 
+                <br>
+                <div><input id="pass_validation" type="password" placeholder="Confirm Password" maxlength="12" minlength="6" required></div>
+                <br>
+                <button class="btn btn-outline-primary overlay-btn-sign" id="form-btn-sign" type="submit" onclick="">Create Account</button>
+                <br>
+                <p>Have an account already? <a href="#" id="reveal-log-in">Log in.</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="/frontend/albums/album-main.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</html>

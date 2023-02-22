@@ -70,7 +70,7 @@ const Music = sequelizeConnection.define('music', {
     }
 }, {
     timestamps: false
-})
+});
 
 const Book = sequelizeConnection.define('books', {
     title:{

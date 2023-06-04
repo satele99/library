@@ -38,6 +38,8 @@ function User(username, password){
     this.password = password;
 }
 
+window.onload = getUserfromLocalStorage(addBookContainer);
+
 //click event listener on page specifiying id's
 document.addEventListener('click', (event) => {
     const target = event.target;
@@ -180,13 +182,40 @@ function createUserAccount(createdUser) {
         }
     })
 };
+function getUserfromLocalStorage(container){
+    const findUser = localStorage.getItem('user')
+    const user = JSON.parse(findUser)
+    if(user) {
+        axios.get(serverApi+`/login/${user.username}/${user.password}`).then(response => {
+            if(response.data != null){
+                signUp.style.display = 'none'
+                logIn.style.display = 'none'
+                logOut.style.display = 'block' 
+                localStorage.setItem('user', JSON.stringify(response.data))
+                console.log(response.data)
+                displayedUser.innerText = `${user.username}`;
+                axios.get(serverApi+`/movie-load/${user.username}/${user.password}`).then(response =>{
+    
+                    for(let i=0;i<response.data.length;i++){
+                        renderBooks(response.data[i], container, displayedUser);
+                    }
+                })
+            }
+        }).catch(error => {
+            if(error){
+                alert('Login failed. Check your login credentials or create an account.');
+            }
+        })
+    }
+}
 
 function getExistingUser(username, password, signUp, logIn, logOut, displayedUser, container){
     axios.get(serverApi+`/login/${username}/${password}`).then(response => {
-        if(response.data == `User ${username} Exists`){
+        if(response.data != null){
             signUp.style.display = 'none'
             logIn.style.display = 'none'
             logOut.style.display = 'block' 
+            localStorage.setItem('user', JSON.stringify(response.data))
             displayedUser.innerText = `${username}`;
             axios.get(serverApi+`/movie-load/${username}/${password}`).then(response =>{
 

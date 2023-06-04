@@ -7,14 +7,14 @@ const app = express();
 const cors = require('cors');
 const server = http.createServer(app);
 const {Sequelize, DataTypes, where} = require('sequelize');
-const sequelizeConnection = new Sequelize('postgres://amirhali:satele@localhost:4000/amirhali', {
+const sequelizeConnection = new Sequelize('postgres://postgres:satele99@localhost:5432/amirhali', {
     define:{
         schema: 'dc_fullstack_library'
     }
 });
 
 app.use(express.json());
-
+// sequelizeConnection.createSchema('dc_fullstack_library')
 const User = sequelizeConnection.define('users', {
     username:{
         type: DataTypes.STRING,
@@ -184,7 +184,7 @@ app.get('/login/:username/:password', (req, res)=> {
                 password: getPass}
     }).then(user => {
         if(user){
-            res.status(200).send(`User ${getUser} Exists`);
+            res.status(200).send(user);
         }else{
             res.status(302).send('User Not Found')
         }

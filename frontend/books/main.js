@@ -39,7 +39,7 @@ function User(username, password){
     this.username = username;
     this.password = password;
 }
-
+window.onload = getUserfromLocalStorage(addBookContainer);
 //click event listener on page specifiying id's
 document.addEventListener('click', (event) => {
     const target = event.target;
@@ -101,6 +101,7 @@ document.addEventListener('click', (event) => {
         logOut.style.display = 'none'
         displayedUser.innerText = '';
         addBookContainer.innerHTML = '';
+        localStorage.clear();
     }
 
     if(target == formBtn){
@@ -168,10 +169,10 @@ function readButton(id, bookName, username, condition){
     axios.put(serverApi+`/update/${bookName}/${username}/${condition}`).then((response)=>{
         if(response.data == 'Read Value updated'){
             readButtonCard.setAttribute('onclick', `readButton(`+id+`,`+`"`+bookName+`"`+`,`+`"`+username+`"`+`,`+`"false")`);
-            // console.log('Read Value updated - condition = false');
+            
         }else if(response.data == 'Read Value updated-2'){
             readButtonCard.setAttribute('onclick', `readButton(`+id+`,`+`"`+bookName+`"`+`,`+`"`+username+`"`+`,`+`"true")`);
-            // console.log('Read Value updated - condition = true');
+           
         }
     }).catch(error => {
         console.log(error);
@@ -183,10 +184,12 @@ function createUserAccount(createdUser, displayedUser, container) {
         if(response.data == 'User successfully created'){
             alert('User successfully created');
             axios.get(serverApi+`/login/${createdUser.username}/${createdUser.password}`).then(response => {
-                if(response.data == `User ${createdUser.username} Exists`){
+                if(response.data != null){
                     signUp.style.display = 'none'
                     logIn.style.display = 'none'
-                    logOut.style.display = 'block' 
+                    logOut.style.display = 'block'
+                    localStorage.setItem('user', JSON.stringify(response.data)) 
+                    console.log(response.data)
                     displayedUser.innerText = `${createdUser.username}`;
                     axios.get(serverApi+`/load-login/${createdUser.username}/${createdUser.password}`).then(response =>{
         
@@ -205,13 +208,41 @@ function createUserAccount(createdUser, displayedUser, container) {
         }
     })
 };
-
+function getUserfromLocalStorage(container){
+    const findUser = localStorage.getItem('user')
+    const user = JSON.parse(findUser)
+    if(user) {
+        axios.get(serverApi+`/login/${user.username}/${user.password}`).then(response => {
+            if(response.data != null){
+                signUp.style.display = 'none'
+                logIn.style.display = 'none'
+                logOut.style.display = 'block' 
+                localStorage.setItem('user', JSON.stringify(response.data))
+                console.log(response.data)
+                displayedUser.innerText = `${user.username}`;
+                axios.get(serverApi+`/load/${user.username}/${user.password}`).then(response =>{
+    
+                    for(let i=0;i<response.data.length;i++){
+                        renderBooks(response.data[i], container, displayedUser);
+                    }
+                })
+            }
+        }).catch(error => {
+            if(error){
+                alert('Login failed. Check your login credentials or create an account.');
+            }
+        })
+    }
+}
 function getExistingUser(username, password, signUp, logIn, logOut, displayedUser, container){
+    
     axios.get(serverApi+`/login/${username}/${password}`).then(response => {
-        if(response.data == `User ${username} Exists`){
+        if(response.data != null){
             signUp.style.display = 'none'
             logIn.style.display = 'none'
             logOut.style.display = 'block' 
+            localStorage.setItem('user', JSON.stringify(response.data))
+            console.log(response.data)
             displayedUser.innerText = `${username}`;
             axios.get(serverApi+`/load/${username}/${password}`).then(response =>{
 

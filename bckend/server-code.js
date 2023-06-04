@@ -7,7 +7,7 @@ const app = express();
 const cors = require('cors');
 const server = http.createServer(app);
 const {Sequelize, DataTypes, where} = require('sequelize');
-const sequelizeConnection = new Sequelize('postgres://postgres:satele99@localhost:5432/amirhali', {
+const sequelizeConnection = new Sequelize('postgres://amirhali:c09VwNBjfbij2m3nugIRQbxL6e78HHhe@dpg-chue4v7dvk4olip1130g-a:5432/postgres99', {
     define:{
         schema: 'dc_fullstack_library'
     }

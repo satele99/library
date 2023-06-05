@@ -123,6 +123,9 @@ sequelizeConnection.authenticate().then(()=> {
 sequelizeConnection.sync().then(()=>{
     console.log('tables created');
 });
+app.get('/', (req, res)=> {
+    res.sendStatus(200)
+});
 
 app.get('/load/:username/:password', (req, res) =>{
     const loggedUser = req.params['username'];

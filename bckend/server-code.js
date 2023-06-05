@@ -7,12 +7,12 @@ const app = express();
 const cors = require('cors');
 const server = http.createServer(app);
 const {Sequelize, DataTypes, where} = require('sequelize');
-const sequelizeConnection = new Sequelize('postgres://amirhali:c09VwNBjfbij2m3nugIRQbxL6e78HHhe@dpg-chue4v7dvk4olip1130g-a:5432/postgres99', {
+const sequelizeConnection = new Sequelize('postgres://amirhali:c09VwNBjfbij2m3nugIRQbxL6e78HHhe@dpg-chue4v7dvk4olip1130g-a/postgres99', {
     define:{
         schema: 'dc_fullstack_library'
     }
 });
-
+//postgres://amirhali:c09VwNBjfbij2m3nugIRQbxL6e78HHhe@dpg-chue4v7dvk4olip1130g-a:5432/postgres99
 app.use(express.json());
 sequelizeConnection.createSchema('dc_fullstack_library')
 const User = sequelizeConnection.define('users', {
@@ -111,7 +111,7 @@ app.listen(port, '127.0.0.1', ()=> {
 });
 app.use(cors());
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+    res.header("Access-Control-Allow-Origin", "https://amir-library-archive.netlify.app");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });

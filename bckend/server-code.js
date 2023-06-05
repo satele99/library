@@ -14,7 +14,7 @@ const sequelizeConnection = new Sequelize('postgres://amirhali:c09VwNBjfbij2m3nu
 });
 //postgres://amirhali:c09VwNBjfbij2m3nugIRQbxL6e78HHhe@dpg-chue4v7dvk4olip1130g-a:5432/postgres99
 app.use(express.json());
-sequelizeConnection.createSchema('dc_fullstack_library')
+// sequelizeConnection.createSchema('dc_fullstack_library')
 const User = sequelizeConnection.define('users', {
     username:{
         type: DataTypes.STRING,

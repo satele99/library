@@ -106,7 +106,8 @@ Book.belongsTo(User, {foreignKey:{allowNull: false}});
 Movie.belongsTo(User, {foreignKey:{allowNull: false}});
 Music.belongsTo(User, {foreignKey:{allowNull: false}});
 
-app.listen(port, '127.0.0.1', ()=> {
+app.listen(port, '0.0.0.0', (err)=> {
+    if (err) throw err
     console.log(`Server started at port ${port}`);
 });
 app.use(cors());
@@ -118,10 +119,16 @@ app.use((req, res, next) => {
 
 sequelizeConnection.authenticate().then(()=> {
     console.log('Database connected successfully');
-});
+}).catch(error => {
+    res.status(501).send(error);
+    console.log(error)
+});;
 
 sequelizeConnection.sync().then(()=>{
     console.log('tables created');
+}).catch(error => {
+    res.status(501).send(error);
+    console.log(error)
 });
 app.get('/', (req, res)=> {
     res.sendStatus(200)
@@ -142,7 +149,10 @@ app.get('/load/:username/:password', (req, res) =>{
         }else{
             res.send('None - user needs to add books');
         }
-    })
+    }).catch(error => {
+        res.status(501).send(error);
+        console.log(error)
+    });
 });
 app.get('/music-load/:username/:password', (req, res) =>{
     const loggedUser = req.params['username'];
@@ -159,7 +169,10 @@ app.get('/music-load/:username/:password', (req, res) =>{
         }else{
             res.send('None - user needs to add books');
         }
-    })
+    }).catch(error => {
+        res.status(501).send(error);
+        console.log(error)
+    });
 });
 app.get('/movie-load/:username/:password', (req, res) =>{
     const loggedUser = req.params['username'];
@@ -176,7 +189,10 @@ app.get('/movie-load/:username/:password', (req, res) =>{
         }else{
             res.send('None - user needs to add books');
         }
-    })
+    }).catch(error => {
+        res.status(501).send(error);
+        console.log(error)
+    });
 });
 
 app.get('/login/:username/:password', (req, res)=> {
@@ -191,7 +207,10 @@ app.get('/login/:username/:password', (req, res)=> {
         }else{
             res.status(302).send('User Not Found')
         }
-    })
+    }).catch(error => {
+        res.status(501).send(error);
+        console.log(error)
+    });
 })
 
 
@@ -207,7 +226,10 @@ app.post('/user', (req, res)=> {
             }); 
             return res.status(201).send('User successfully created');
         };
-    })
+    }).catch(error => {
+        res.status(501).send(error);
+        console.log(error)
+    });
 })
 
 let foundUserData, foundBookData;
